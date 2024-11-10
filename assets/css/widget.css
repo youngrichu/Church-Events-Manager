@@ -1,0 +1,126 @@
+.church-events-widget-container {
+    position: relative;
+}
+
+.church-events-list .event-item {
+    position: relative;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.church-events-list .event-item:hover {
+    background: #f5f5f5;
+}
+
+.event-summary h4 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.event-meta {
+    font-size: 14px;
+    color: #666;
+}
+
+.event-meta span {
+    margin-right: 10px;
+}
+
+/* Hover Card Styles */
+.event-detail-card {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    margin-left: 20px;
+}
+
+.event-item:hover .event-detail-card {
+    display: block;
+}
+
+.event-card-content {
+    padding: 15px;
+}
+
+.event-card-content h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.event-datetime,
+.event-location {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.event-datetime i,
+.event-location i {
+    margin-right: 8px;
+    color: #4a90e2;
+}
+
+.event-description {
+    margin: 15px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.event-link {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #4a90e2;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.event-link:hover {
+    background: #357abd;
+    color: white;
+    text-decoration: none;
+}
+
+/* Arrow pointer */
+.event-detail-card:before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 20px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .event-detail-card {
+        left: 0;
+        right: 0;
+        width: auto;
+        margin: 10px 0;
+        position: relative;
+    }
+    
+    .event-detail-card:before {
+        display: none;
+    }
+} 
