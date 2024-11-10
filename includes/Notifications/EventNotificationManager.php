@@ -20,7 +20,15 @@ class EventNotificationManager {
             return;
         }
 
+        // Check if notification was already sent
+        if (get_post_meta($post->ID, '_event_notification_sent', true)) {
+            return;
+        }
+
         $this->send_event_notification($post);
+        
+        // Mark notification as sent
+        update_post_meta($post->ID, '_event_notification_sent', true);
     }
 
     public function send_event_notification($event) {
@@ -37,6 +45,19 @@ class EventNotificationManager {
             get_option('date_format') . ' ' . get_option('time_format'),
             strtotime($event_meta->event_date)
         );
+
+        // Check if notification already exists
+        $existing_notification = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM {$wpdb->prefix}app_notifications 
+            WHERE reference_type = 'church_event' 
+            AND reference_id = %d 
+            AND created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)",
+            $event->ID
+        ));
+
+        if ($existing_notification) {
+            return;
+        }
 
         // Prepare notification data
         $notification_data = [
@@ -83,7 +104,6 @@ class EventNotificationManager {
             }
         }
 
-        // Also send via API
-        $this->api->send_notification($notification_data);
+        // No need to call $this->api->send_notification() since we're already handling both DB insert and push notifications
     }
 } 
