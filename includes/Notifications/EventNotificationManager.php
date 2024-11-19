@@ -4,106 +4,120 @@ namespace ChurchEventsManager\Notifications;
 class EventNotificationManager {
     private $api;
     private $hooks;
+    private $expo_push;
 
     public function __construct() {
         // Initialize notification classes
         $this->api = new \Church_App_Notifications_API();
         $this->hooks = new \Church_App_Notifications_Hooks();
+        $this->expo_push = new \Church_App_Notifications_Expo_Push();
 
         // Hook into event publication
         add_action('transition_post_status', [$this, 'handle_event_status_change'], 10, 3);
     }
 
     public function handle_event_status_change($new_status, $old_status, $post) {
-        // Only proceed if this is an event being published
-        if ($post->post_type !== 'church_event' || $new_status !== 'publish' || $old_status === 'publish') {
-            return;
-        }
+        try {
+            // Only proceed if this is an event being published
+            if ($post->post_type !== 'church_event' || $new_status !== 'publish') {
+                return;
+            }
 
-        // Check if notification was already sent
-        if (get_post_meta($post->ID, '_event_notification_sent', true)) {
-            return;
-        }
+            // Don't send notification for updates unless specifically requested
+            if ($old_status === 'publish' && !get_post_meta($post->ID, '_notify_update', true)) {
+                return;
+            }
 
-        $this->send_event_notification($post);
-        
-        // Mark notification as sent
-        update_post_meta($post->ID, '_event_notification_sent', true);
+            // Check if notification was already sent recently (within 5 minutes)
+            $recently_sent = get_post_meta($post->ID, '_event_notification_sent', true);
+            $sent_time = get_post_meta($post->ID, '_event_notification_sent_time', true);
+            
+            if ($recently_sent && $sent_time && (time() - strtotime($sent_time) < 300)) {
+                error_log('Skipping notification - already sent recently');
+                return;
+            }
+
+            $this->send_event_notification($post);
+            
+            // Mark notification as sent with timestamp
+            update_post_meta($post->ID, '_event_notification_sent', true);
+            update_post_meta($post->ID, '_event_notification_sent_time', current_time('mysql'));
+
+            // Clear the update notification flag
+            delete_post_meta($post->ID, '_notify_update');
+            
+        } catch (\Exception $e) {
+            error_log('Error in handle_event_status_change: ' . $e->getMessage());
+        }
     }
 
     public function send_event_notification($event) {
-        global $wpdb;
+        try {
+            global $wpdb;
 
-        // Get event meta data
-        $event_meta = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}cem_event_meta WHERE event_id = %d",
-            $event->ID
-        ));
+            // Get event meta data
+            $event_meta = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}cem_event_meta WHERE event_id = %d",
+                $event->ID
+            ));
 
-        // Format event date
-        $event_date = date_i18n(
-            get_option('date_format') . ' ' . get_option('time_format'),
-            strtotime($event_meta->event_date)
-        );
-
-        // Check if notification already exists
-        $existing_notification = $wpdb->get_var($wpdb->prepare(
-            "SELECT id FROM {$wpdb->prefix}app_notifications 
-            WHERE reference_type = 'church_event' 
-            AND reference_id = %d 
-            AND created_at > DATE_SUB(NOW(), INTERVAL 5 MINUTE)",
-            $event->ID
-        ));
-
-        if ($existing_notification) {
-            return;
-        }
-
-        // Prepare notification data
-        $notification_data = [
-            'user_id' => 0, // Send to all users
-            'title' => sprintf(__('New Event: %s', 'church-events-manager'), $event->post_title),
-            'body' => sprintf(
-                __('New event scheduled for %s at %s', 'church-events-manager'),
-                $event_date,
-                $event_meta->location
-            ),
-            'type' => 'event',
-            'reference_id' => $event->ID,
-            'reference_type' => 'church_event',
-            'reference_url' => get_permalink($event->ID),
-            'image_url' => get_the_post_thumbnail_url($event->ID, 'full'),
-            'created_at' => current_time('mysql')
-        ];
-
-        // Insert into notifications table
-        $table_name = $wpdb->prefix . 'app_notifications';
-        $wpdb->insert(
-            $table_name,
-            $notification_data,
-            [
-                '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s'
-            ]
-        );
-
-        // Send push notifications to all users
-        $users = get_users();
-        foreach ($users as $user) {
-            $token = get_user_meta($user->ID, 'expo_push_token', true);
-            if ($token) {
-                $this->hooks->send_push_notification(
-                    $token,
-                    $notification_data['title'],
-                    $notification_data['body'],
-                    [
-                        'type' => 'event',
-                        'event_id' => $event->ID,
-                        'url' => $notification_data['reference_url']
-                    ]
-                );
+            // Format event date and location with fallbacks
+            $event_date = '';
+            $location = '';
+            
+            if ($event_meta) {
+                if (!empty($event_meta->event_date)) {
+                    $event_date = date_i18n(
+                        get_option('date_format') . ' ' . get_option('time_format'),
+                        strtotime($event_meta->event_date)
+                    );
+                }
+                $location = !empty($event_meta->location) ? $event_meta->location : '';
             }
-        }
 
-        // No need to call $this->api->send_notification() since we're already handling both DB insert and push notifications
+            // Prepare notification data
+            $notification_data = [
+                'user_id' => 0, // Send to all users
+                'title' => sprintf(__('New Event: %s', 'church-events-manager'), $event->post_title),
+                'body' => !empty($event_date) && !empty($location) 
+                    ? sprintf(
+                        __('New event scheduled for %s at %s', 'church-events-manager'),
+                        $event_date,
+                        $location
+                    )
+                    : wp_trim_words(wp_strip_all_tags($event->post_content), 20),
+                'type' => 'event',
+                'reference_id' => $event->ID,
+                'reference_type' => 'church_event',
+                'reference_url' => "dubaidebremewi://events/{$event->ID}",
+                'image_url' => get_the_post_thumbnail_url($event->ID, 'full'),
+                'created_at' => current_time('mysql')
+            ];
+
+            // Insert into notifications table
+            $table_name = $wpdb->prefix . 'app_notifications';
+            $result = $wpdb->insert(
+                $table_name,
+                $notification_data,
+                [
+                    '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s'
+                ]
+            );
+
+            if ($result === false) {
+                error_log('Failed to insert notification: ' . $wpdb->last_error);
+                return;
+            }
+
+            $notification_id = $wpdb->insert_id;
+            error_log('Created notification with ID: ' . $notification_id);
+
+            // Send push notification using Expo
+            $sent = $this->expo_push->send_notification($notification_id);
+            error_log('Push notification sent: ' . ($sent ? 'true' : 'false'));
+
+        } catch (\Exception $e) {
+            error_log('Error in send_event_notification: ' . $e->getMessage());
+        }
     }
-} 
+}
