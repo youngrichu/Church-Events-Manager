@@ -1,0 +1,148 @@
+# Copyright (C) 2024 Your Name
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Church Events Manager 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/yourusername/church-events-manager/issues\n"
+"POT-Creation-Date: 2024-01-01T00:00:00+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: WP-CLI 2.8.1\n"
+"X-Domain: church-events-manager\n"
+
+#. Plugin Name
+msgid "Church Events Manager"
+msgstr ""
+
+#. Plugin URI
+msgid "https://github.com/yourusername/church-events-manager"
+msgstr ""
+
+#. Description
+msgid "A WordPress plugin to manage church events with React Native app integration"
+msgstr ""
+
+#. Author
+msgid "Your Name"
+msgstr ""
+
+#. Author URI
+msgid "https://yourwebsite.com"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:123
+msgid "Event Details"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:131
+msgid "Recurring Settings"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:138
+msgid "Event Date:"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:143
+msgid "Time:"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:150
+msgid "End Date:"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:155
+msgid "End Time:"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:162
+msgid "Location:"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:169
+msgid "Maximum Attendees:"
+msgstr ""
+
+#: includes/Admin/EventsAdmin.php:176
+msgid "Featured Event"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:45
+msgid "Events Settings"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:46
+msgid "Settings"
+msgstr ""
+
+#: includes/Maps/GoogleMapsHandler.php:89
+msgid "Get Directions"
+msgstr ""
+
+#: includes/Maps/GoogleMapsHandler.php:106
+msgid "Search for a location"
+msgstr ""
+
+#: includes/Notifications/NotificationManager.php:142
+msgid "New Event Added"
+msgstr ""
+
+#: includes/Notifications/NotificationManager.php:144
+msgid "New event: %s"
+msgstr ""
+
+#: includes/Notifications/NotificationManager.php:150
+msgid "Event Reminder"
+msgstr ""
+
+#: includes/Notifications/NotificationManager.php:152
+msgid "Reminder: %s is happening soon!"
+msgstr ""
+
+#: includes/Public/Calendar.php:156
+msgid "View Details"
+msgstr ""
+
+#: includes/Public/EventsWidget.php:13
+msgid "Church Events Widget"
+msgstr ""
+
+#: includes/Public/EventsWidget.php:14
+msgid "Display upcoming church events"
+msgstr ""
+
+#: includes/Public/EventsWidget.php:89
+msgid "No upcoming events."
+msgstr ""
+
+#: includes/Public/EventsWidget.php:95
+msgid "View All Events"
+msgstr ""
+
+#: includes/RSVP/RSVPManager.php:45
+msgid "Event has reached maximum capacity"
+msgstr ""
+
+#: includes/RSVP/RSVPManager.php:51
+msgid "User has already RSVP'd to this event"
+msgstr ""
+
+#: church-events-manager.php:52
+msgid "Church Events Manager requires PHP version %s or higher. You are running version %s"
+msgstr ""
+
+#: church-events-manager.php:60
+msgid "Church Events Manager requires WordPress version %s or higher. You are running version %s"
+msgstr ""
+
+#: church-events-manager.php:156
+msgid "Thank you for installing Church Events Manager! "
+msgstr ""
+
+#: church-events-manager.php:159
+msgid "Click here to configure the plugin"
+msgstr "" 

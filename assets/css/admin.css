@@ -1,0 +1,113 @@
+/* Admin styles for Church Events Manager */
+
+/* Generic badge styling */
+.cem-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  border-radius: 999px;
+  background: #f1f5f9; /* slate-100 */
+  color: #334155; /* slate-700 */
+  border: 1px solid #cbd5e1; /* slate-300 */
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+/* Recurring badge variant */
+.cem-badge--recurring {
+  background: #eef2ff; /* indigo-50 */
+  color: #4338ca; /* indigo-700 */
+  border-color: #c7d2fe; /* indigo-200 */
+}
+
+/* Tighten badge look within Date & Time column */
+.column-event_datetime .cem-badge {
+  margin-top: -2px;
+}
+
+/* Error styles for invalid end date/time */
+.cem-error-message {
+  margin-top: 6px;
+  color: #b91c1c; /* red-700 */
+  font-size: 12px;
+}
+.cem-input-error {
+  border-color: #ef4444 !important; /* red-500 */
+  box-shadow: 0 0 0 1px #fecaca; /* red-200 */
+}
+
+/* Recurring Settings UI (full-width box styling like the screenshot) */
+#church_event_recurring .inside {
+  margin-top: 8px;
+}
+#church_event_recurring .inside .recurring-options {
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #f9fafb; /* gray-50 */
+}
+#church_event_recurring .inside .recurring-options p {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+#church_event_recurring .inside .recurring-options p + p {
+  border-top: 1px dashed #e5e7eb;
+  padding-top: 10px;
+}
+#church_event_recurring .inside .recurring-options label {
+  min-width: 140px;
+  font-weight: 600;
+  color: #334155; /* slate-700 */
+}
+#church_event_recurring .inside .recurring-options select,
+#church_event_recurring .inside .recurring-options input[type="number"],
+#church_event_recurring .inside .recurring-options input[type="date"] {
+  max-width: 220px;
+}
+#church_event_recurring .inside .recurrence-end-date,
+#church_event_recurring .inside .recurrence-end-count {
+  padding-left: 152px; /* aligns with label min-width + gap */
+}
+#church_event_recurring .inside .recurring-options .description {
+  color: #64748b; /* slate-500 */
+  font-size: 12px;
+}
+
+/* Date & Time card layout */
+.cem-card {
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #ffffff;
+  margin-bottom: 12px;
+}
+.cem-date-time .cem-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.cem-date-time .cem-field{
+  display: flex;
+  flex-direction: column;
+}
+.cem-date-time .cem-field label{
+  font-weight: 600;
+  color: #334155; /* slate-700 */
+  margin-bottom: 4px;
+}
+.cem-date-time .cem-controls{
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+/* Make it responsive: 2 columns on medium, 1 on small */
+@media (max-width: 960px){
+  .cem-date-time .cem-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px){
+  .cem-date-time .cem-grid{ grid-template-columns: 1fr; }
+}

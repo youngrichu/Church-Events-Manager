@@ -1,0 +1,520 @@
+/* General Event Styles */
+.event-single,
+.event-item {
+    margin-bottom: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Event Header */
+.event-header {
+    position: relative;
+}
+
+.event-thumbnail {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.event-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.event-title {
+    margin: 1rem;
+    font-size: 2em;
+    color: #333;
+}
+
+/* Event Meta */
+.event-meta {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.event-meta > div {
+    margin-bottom: 0.5rem;
+}
+
+.meta-label {
+    font-weight: bold;
+    color: #495057;
+    margin-right: 0.5rem;
+}
+
+.event-datetime,
+.event-location,
+.event-recurring {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.event-datetime i,
+.event-location i {
+    color: #6c757d;
+}
+
+/* Event Content */
+.event-content {
+    padding: 1.5rem;
+    line-height: 1.6;
+}
+
+/* RSVP Section */
+.event-rsvp {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.event-rsvp h3 {
+    margin-top: 0;
+    color: #495057;
+}
+
+/* Event Footer */
+.event-footer {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.event-categories {
+    font-size: 0.9em;
+}
+
+.event-categories a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.event-categories a:hover {
+    color: #495057;
+    text-decoration: underline;
+}
+
+/* Archive/List View */
+.events-filter {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.events-filter-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.events-filter select {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.events-list .event-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.events-list .event-thumbnail {
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+}
+
+.events-list .event-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.events-list .event-header {
+    padding: 1rem;
+}
+
+.events-list .event-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5em;
+}
+
+.events-list .event-title a {
+    color: #333;
+    text-decoration: none;
+}
+
+.events-list .event-title a:hover {
+    color: #007bff;
+}
+
+.events-list .event-meta {
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.events-list .event-excerpt {
+    padding: 0 1rem;
+    flex-grow: 1;
+}
+
+.events-list .event-footer {
+    padding: 1rem;
+    margin-top: auto;
+}
+
+/* Buttons */
+.button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: background-color 0.2s;
+}
+
+.button:hover {
+    background: #0056b3;
+    color: #fff;
+    text-decoration: none;
+}
+
+.button.button-secondary {
+    background: #6c757d;
+}
+.button.button-secondary:hover {
+    background: #5a6268;
+}
+
+/* Map */
+.event-map {
+    margin-top: 1rem;
+    height: 300px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Pagination */
+.pagination {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.page-numbers {
+    padding: 0.5rem 0.9rem;
+    min-width: 2.25rem;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: #495057;
+    text-decoration: none;
+}
+
+.page-numbers.current {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
+.page-numbers:hover:not(.current) {
+    background: #e9ecef;
+    text-decoration: none;
+}
+
+.page-numbers:focus {
+    outline: 2px solid #80bdff;
+    outline-offset: 2px;
+}
+
+.page-numbers.prev,
+.page-numbers.next {
+    font-weight: 600;
+}
+
+.page-numbers.dots {
+    background: transparent;
+    border: none;
+    padding: 0.5rem 0.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .events-list .event-item {
+        flex-direction: column;
+    }
+
+    .events-list .event-thumbnail {
+        width: 100%;
+        height: 200px;
+    }
+
+    .events-filter-form {
+        flex-direction: column;
+    }
+
+    .events-filter-form select,
+    .events-filter-form button {
+        width: 100%;
+    }
+
+    .event-thumbnail {
+        height: 200px;
+    }
+
+    .event-title {
+        font-size: 1.5em;
+    }
+
+    .event-meta {
+        flex-direction: column;
+    }
+}
+
+/* No Events Message */
+.no-events {
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #6c757d;
+}
+
+/* Loading States */
+.events-loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* RTL Support */
+.rtl .event-meta > div {
+    flex-direction: row-reverse;
+}
+
+.rtl .meta-label {
+    margin-right: 0;
+    margin-left: 0.5rem;
+}
+
+.rtl .events-list .event-thumbnail {
+    margin-right: 0;
+    margin-left: 1.5rem;
+}
+
+/* View Switcher */
+.view-switcher {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+.view-tab {
+    display: inline-block;
+    padding: 0.25rem 0;
+    color: #6b7280; /* gray-500 */
+    text-decoration: none;
+    font-size: 0.95rem;
+    position: relative;
+}
+.view-tab:hover { color: #374151; /* gray-700 */ }
+.view-tab.active {
+    color: #111827; /* gray-900 */
+    font-weight: 600;
+}
+.view-tab.active::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -8px;
+    height: 2px;
+    background: #111827; /* gray-900 */
+    border-radius: 1px;
+}
+
+/* Day Navigation */
+.day-navigation {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 1rem 0;
+}
+  .day-navigation .day-label {
+    font-weight: 600;
+  }
+
+/* Events Toolbar */
+.events-toolbar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 0.5rem;
+    flex-wrap: wrap; /* allow wrapping on smaller widths */
+}
+.events-toolbar .church-events-search-form {
+    flex: 0 0 auto; /* stop stretching full width */
+    max-width: 480px; /* smaller search bar width */
+}
+.events-toolbar .view-switcher { margin-left: auto; }
+
+/* List view cards (match screenshot: date left, image right) */
+.events-list .events-card {
+    display: grid;
+    grid-template-columns: 72px 1fr 260px;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+.events-list .events-card:last-child { border-bottom: none; }
+.events-card .event-date-col {
+    text-align: center;
+    color: #6b7280; /* gray-500 */
+}
+.events-card .event-dow { font-size: 0.8rem; letter-spacing: 0.05em; }
+.events-card .event-day { font-size: 2rem; font-weight: 700; color: #111827; }
+.events-card .event-content-col .event-title { font-size: 1.25rem; margin: 0; }
+.events-card .event-content-col .event-title a { color: #111827; text-decoration: none; }
+.events-card .event-content-col .event-title a:hover { text-decoration: underline; }
+.events-card .event-content-col .event-meta { color: #6b7280; margin: 0.25rem 0 0.5rem; }
+.events-card .event-thumb-col { display: none; }
+.events-card .event-thumb-col .event-thumb { width: 100%; height: auto; border-radius: 6px; object-fit: cover; }
+
+@media (min-width: 900px) {
+  .events-card .event-thumb-col { display: block; }
+}
+
+/* Responsive toolbar adjustments */
+@media (max-width: 768px) {
+  .events-toolbar .church-events-search-form {
+    flex: 1 1 100%;
+    max-width: none; /* full width on mobile */
+  }
+  .events-toolbar .view-switcher {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Page padding for Events List */
+#primary .site-main {
+  padding: 0 24px; /* add horizontal breathing room */
+}
+@media (min-width: 1280px) {
+  #primary .site-main { padding: 0 40px; }
+}
+
+/* Single Event actions and navigation */
+.event-actions {
+  margin: 0 1rem 0.5rem;
+}
+.event-nav {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.event-nav .prev-event,
+.event-nav .next-event {
+  flex: 1 1 auto;
+}
+
+/* Ensure single event page padding matches list */
+.single-church_event #primary .site-main {
+  padding: 0 24px;
+}
+
+/* Upcoming Dates: series overview */
+.event-series-overview { 
+  margin-top: 2rem; 
+  padding-top: 1rem; 
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+.series-title { 
+  font-size: 1.25rem; 
+  margin-bottom: 0.75rem; 
+}
+.series-groups { 
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 1rem; 
+}
+@media (min-width: 640px) {
+  .series-groups { grid-template-columns: repeat(2, 1fr); }
+}
+.series-group { 
+  background: rgba(0,0,0,0.02); 
+  border: 1px solid rgba(0,0,0,0.06); 
+  border-radius: 8px; 
+  padding: 0.75rem; 
+}
+.series-month { 
+  font-weight: 600; 
+  margin-bottom: 0.5rem; 
+}
+.series-dates { 
+  list-style: none; 
+  margin: 0; 
+  padding: 0; 
+}
+.series-date { 
+  margin: 0.25rem 0; 
+}
+.series-date a { 
+  text-decoration: none; 
+  color: inherit; 
+}
+.series-date a:hover { 
+  text-decoration: underline; 
+}
+.series-toggle { 
+  margin-top: 0.75rem; 
+}
+
+
+/* Shortcode list styles */
+.church-events-list { margin: 1rem 0; }
+.church-events-list .event-item { padding: 1rem 0; border-bottom: 1px solid #eee; }
+.church-events-list .event-item h4 { margin: 0 0 .25rem; font-size: 1.05rem; }
+.church-events-list .event-item .meta { color: #555; font-size: .9rem; }
+.church-events-list .event-item .event-series-tag { background: #f5f5f5; color: #333; border-radius: 4px; padding: .15rem .4rem; margin-left: .5rem; font-size: .8rem; }
+.church-events-list .event-item .event-details-link { margin-left: .5rem; font-size: .85rem; }
+
+.shortcode-view-more { text-align: center; margin-top: 1rem; }
+.shortcode-view-more .button { display: inline-block; padding: .5rem .85rem; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; }
+.shortcode-view-more .button:hover { background: #f7f7f7; }

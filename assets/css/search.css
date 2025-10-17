@@ -1,0 +1,55 @@
+.church-events-search-form {
+    margin: 1rem 0;
+    padding: 0;
+    background: transparent;
+}
+
+.search-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid #e5e7eb; /* gray-200 */
+    border-radius: 999px;
+    padding: 0.35rem 0.6rem; /* slightly smaller */
+    background: #ffffff;
+}
+.search-input::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%236b7280' stroke-width='1.5'><circle cx='6' cy='6' r='5'/><path d='M10 10l4 4'/></svg>") center/contain no-repeat;
+}
+.church-events-search-form input[type="search"] {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.95rem; /* slightly smaller */
+    color: #111827; /* gray-900 */
+    background: transparent;
+}
+.church-events-search-form input[type="search"]::placeholder {
+    color: #9ca3af; /* gray-400 */
+}
+.church-events-search-form .button.find-events {
+    border: none;
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem; /* slightly smaller */
+    font-weight: 600;
+    background: #4f6ef7; /* brand blue */
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(79,110,247,0.25);
+}
+.church-events-search-form .button.find-events:hover {
+    background: #3f5de0;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .search-input { padding: 0.45rem 0.65rem; }
+    .church-events-search-form .button.find-events { padding: 0.45rem 0.85rem; }
+}
+
+/* RTL tweaks */
+.rtl .search-input { direction: rtl; }
