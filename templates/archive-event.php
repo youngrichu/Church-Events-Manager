@@ -3,10 +3,14 @@
  * The template for displaying event archives
  */
 
+// Enqueue public styles for event archive/search pages
+wp_enqueue_style('cem-public', CEM_PLUGIN_URL . 'assets/css/public.css', [], CEM_VERSION);
+wp_enqueue_style('cem-search', CEM_PLUGIN_URL . 'assets/css/search.css', [], CEM_VERSION);
+
 get_header();
 ?>
 
-<div id="primary" class="content-area">
+<div id="primary" class="content-area cem-events-archive">
     <main id="main" class="site-main">
         <header class="page-header">
             <h1 class="page-title">
@@ -18,6 +22,10 @@ get_header();
                 }
                 ?>
             </h1>
+            <?php 
+            // Inline search form for events
+            echo \ChurchEventsManager\Search\SearchHandler::get_search_form();
+            ?>
         </header>
 
         <?php if (have_posts()) : ?>
@@ -123,5 +131,5 @@ get_header();
 </div>
 
 <?php
-get_sidebar();
-get_footer(); 
+// Removed sidebar to prevent default blog widgets on event pages
+get_footer();

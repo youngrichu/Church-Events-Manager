@@ -53,3 +53,33 @@
 
 /* RTL tweaks */
 .rtl .search-input { direction: rtl; }
+
+/* Scoped overrides for archive/search page to ensure theme styles don’t override */
+.cem-events-archive .church-events-search-form {
+  margin: 1rem 0 1.25rem;
+}
+.cem-events-archive .church-events-search-form .search-input {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.cem-events-archive .church-events-search-form .button.find-events {
+  background: #4f6ef7;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+}
+.cem-events-archive .church-events-search-form .button.find-events:hover {
+  background: #3f5de0;
+}
+
+/* Match filter button look */
+.cem-events-archive .events-filter .button {
+  background: #4f6ef7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+}
+.cem-events-archive .events-filter .button:hover {
+  background: #3f5de0;
+}

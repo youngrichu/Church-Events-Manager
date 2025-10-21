@@ -251,8 +251,8 @@ article.event-single .event-sidebar,
 /* Event Footer */
 .event-footer {
     padding: 1rem;
-    background: #f8f9fa;
-    border-top: 1px solid #dee2e6;
+    /* background: #f8f9fa;
+    border-top: 1px solid #dee2e6; */
 }
 
 /* Enhanced footer padding for single events */
@@ -1198,12 +1198,19 @@ body.single-church_event .no-categories,
   }
 }
 
-/* Page padding for Events List */
-#primary .site-main {
-  padding: 0 24px; /* add horizontal breathing room */
-}
-@media (min-width: 1280px) {
-  #primary .site-main { padding: 0 40px; }
+/* Scoped page padding for Events pages (horizontal + vertical, responsive) */
+.page-template-events-list #primary .site-main,
+.post-type-archive-church_event #primary .site-main,
+.single-church_event #primary .site-main,
+#primary.cem-events-archive .site-main,
+.cem-events-archive .site-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: clamp(16px, 4vw, 40px);
+  padding-right: clamp(16px, 4vw, 40px);
+  padding-top: clamp(16px, 3vw, 32px);
+  padding-bottom: clamp(24px, 5vw, 64px);
+  box-sizing: border-box;
 }
 
 /* Single Event actions and navigation - Professional Design */

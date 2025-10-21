@@ -143,10 +143,12 @@ class EventsShortcodes {
             }
             $output .= '</div>'; // .event-meta
 
+            // Prefer explicit post excerpt, fallback to trimmed content
             $excerpt_chars = intval($atts['excerpt_chars']);
             $excerpt_chars = $excerpt_chars > 0 ? $excerpt_chars : 160;
-            $raw_content = get_post_field('post_content', $event->ID);
-            $excerpt = wp_html_excerpt(wp_strip_all_tags($raw_content), $excerpt_chars, '&hellip;');
+            $raw_excerpt = get_post_field('post_excerpt', $event->ID);
+            $source_text = $raw_excerpt !== '' ? $raw_excerpt : get_post_field('post_content', $event->ID);
+            $excerpt = wp_html_excerpt(wp_strip_all_tags($source_text), $excerpt_chars, '&hellip;');
 
             $output .= '<div class="event-excerpt">' . esc_html($excerpt) . '</div>';
             $output .= '</div>'; // .event-content-col
@@ -173,7 +175,7 @@ class EventsShortcodes {
         ob_start();
         echo '<div class="single-event">';
         echo '<h2>' . esc_html($post->post_title) . '</h2>';
-        echo apply_filters('the_content', $post->post_content);
+        echo \apply_filters('the_content', $post->post_content);
         echo '</div>';
         return ob_get_clean();
     }

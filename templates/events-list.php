@@ -44,7 +44,13 @@ if ($view === 'month' || $view === 'day') {
 <div id="primary" class="content-area">
   <main id="main" class="site-main">
     <header class="page-header">
+      <?php
+        $elementor_settings = get_post_meta(get_the_ID(), '_elementor_page_settings', true);
+        $hide_title = is_array($elementor_settings) && isset($elementor_settings['hide_title']) && $elementor_settings['hide_title'] === 'yes';
+      ?>
+      <?php if (!$hide_title) : ?>
       <h1 class="page-title"><?php echo esc_html(get_the_title()); ?></h1>
+      <?php endif; ?>
 
       <div class="events-toolbar">
         <?php 

@@ -4,33 +4,33 @@ namespace ChurchEventsManager\Core;
 class Plugin {
     public function __construct() {
         // Register post type and taxonomies
-        add_action('init', [$this, 'register_post_type']);
-        add_action('init', [$this, 'register_taxonomies']);
+        \add_action('init', [$this, 'register_post_type']);
+        \add_action('init', [$this, 'register_taxonomies']);
         
         // Add capabilities on plugin activation
-        register_activation_hook(CEM_PLUGIN_FILE, [$this, 'add_capabilities']);
+        \register_activation_hook(CEM_PLUGIN_FILE, [$this, 'add_capabilities']);
         
         // Load other components
         $this->load_dependencies();
 
         // Ensure Events List page exists after WordPress initializes rewrite rules
-        add_action('init', [$this, 'ensure_events_list_page']);
+        \add_action('init', [$this, 'ensure_events_list_page']);
     }
 
     public function register_post_type() {
         $labels = [
-            'name'               => __('Events', 'church-events-manager'),
-            'singular_name'      => __('Event', 'church-events-manager'),
-            'menu_name'          => __('Events', 'church-events-manager'),
-            'add_new'           => __('Add New', 'church-events-manager'),
-            'add_new_item'      => __('Add New Event', 'church-events-manager'),
-            'edit_item'         => __('Edit Event', 'church-events-manager'),
-            'new_item'          => __('New Event', 'church-events-manager'),
-            'view_item'         => __('View Event', 'church-events-manager'),
-            'search_items'      => __('Search Events', 'church-events-manager'),
-            'not_found'         => __('No events found', 'church-events-manager'),
-            'not_found_in_trash'=> __('No events found in Trash', 'church-events-manager'),
-            'all_items'         => __('All Events', 'church-events-manager')
+            'name'               => \__('Events', 'church-events-manager'),
+            'singular_name'      => \__('Event', 'church-events-manager'),
+            'menu_name'          => \__('Events', 'church-events-manager'),
+            'add_new'           => \__('Add New', 'church-events-manager'),
+            'add_new_item'      => \__('Add New Event', 'church-events-manager'),
+            'edit_item'         => \__('Edit Event', 'church-events-manager'),
+            'new_item'          => \__('New Event', 'church-events-manager'),
+            'view_item'         => \__('View Event', 'church-events-manager'),
+            'search_items'      => \__('Search Events', 'church-events-manager'),
+            'not_found'         => \__('No events found', 'church-events-manager'),
+            'not_found_in_trash'=> \__('No events found in Trash', 'church-events-manager'),
+            'all_items'         => \__('All Events', 'church-events-manager')
         ];
 
         $args = [
@@ -64,44 +64,46 @@ class Plugin {
             'map_meta_cap'       => true,
         ];
 
-        register_post_type('church_event', $args);
+        \register_post_type('church_event', $args);
     }
 
     public function register_taxonomies() {
         $labels = [
-            'name'              => __('Event Categories', 'church-events-manager'),
-            'singular_name'     => __('Event Category', 'church-events-manager'),
-            'search_items'      => __('Search Categories', 'church-events-manager'),
-            'all_items'         => __('All Categories', 'church-events-manager'),
-            'parent_item'       => __('Parent Category', 'church-events-manager'),
-            'parent_item_colon' => __('Parent Category:', 'church-events-manager'),
-            'edit_item'         => __('Edit Category', 'church-events-manager'),
-            'update_item'       => __('Update Category', 'church-events-manager'),
-            'add_new_item'      => __('Add New Category', 'church-events-manager'),
-            'new_item_name'     => __('New Category Name', 'church-events-manager'),
-            'menu_name'         => __('Categories', 'church-events-manager'),
+            'name'              => \__('Event Categories', 'church-events-manager'),
+            'singular_name'     => \__('Event Category', 'church-events-manager'),
+            'search_items'      => \__('Search Categories', 'church-events-manager'),
+            'all_items'         => \__('All Categories', 'church-events-manager'),
+            'parent_item'       => \__('Parent Category', 'church-events-manager'),
+            'parent_item_colon' => \__('Parent Category:', 'church-events-manager'),
+            'edit_item'         => \__('Edit Category', 'church-events-manager'),
+            'update_item'       => \__('Update Category', 'church-events-manager'),
+            'add_new_item'      => \__('Add New Category', 'church-events-manager'),
+            'new_item_name'     => \__('New Category Name', 'church-events-manager'),
+            'menu_name'         => \__('Categories', 'church-events-manager'),
         ];
 
-        register_taxonomy('event_category', ['church_event'], [
-            'labels'            => $labels,
-            'hierarchical'      => true,
-            'show_ui'           => true,
-            'show_admin_column' => true,
-            'query_var'         => true,
-            'rewrite'           => ['slug' => 'event-category'],
-            'show_in_rest'      => true,
-            'capabilities'      => [
-                'manage_terms'  => 'manage_categories',
-                'edit_terms'    => 'manage_categories',
-                'delete_terms'  => 'manage_categories',
-                'assign_terms'  => 'edit_posts'
-            ]
-        ]);
+        if (function_exists('register_taxonomy')) {
+            \call_user_func('register_taxonomy', 'event_category', ['church_event'], [
+                'labels'            => $labels,
+                'hierarchical'      => true,
+                'show_ui'           => true,
+                'show_admin_column' => true,
+                'query_var'         => true,
+                'rewrite'           => ['slug' => 'event-category'],
+                'show_in_rest'      => true,
+                'capabilities'      => [
+                    'manage_terms'  => 'manage_categories',
+                    'edit_terms'    => 'manage_categories',
+                    'delete_terms'  => 'manage_categories',
+                    'assign_terms'  => 'edit_posts'
+                ]
+            ]);
+        }
     }
 
     public function add_capabilities() {
         // Get the administrator role
-        $admin = get_role('administrator');
+        $admin = function_exists('get_role') ? \call_user_func('get_role', 'administrator') : null;
         
         if ($admin) {
             // Add post type capabilities
@@ -122,7 +124,7 @@ class Plugin {
 
     private function load_dependencies() {
         // Load admin functionality
-        if (is_admin()) {
+        if (\is_admin()) {
             new \ChurchEventsManager\Admin\EventsAdmin();
             new \ChurchEventsManager\Admin\SettingsPage();
             new \ChurchEventsManager\Export\ExportManager();
@@ -137,10 +139,12 @@ class Plugin {
         
         // Load notifications
         new \ChurchEventsManager\Notifications\NotificationManager();
+        // Initialize per-occurrence reminder scheduler
+        new \ChurchEventsManager\Notifications\ReminderScheduler();
         
         // Register widget
-        add_action('widgets_init', function() {
-            register_widget('\\ChurchEventsManager\\Frontend\\EventsWidget');
+        \add_action('widgets_init', function() {
+            \register_widget('\\ChurchEventsManager\\Frontend\\EventsWidget');
         });
         
         // Initialize shortcodes
@@ -158,7 +162,7 @@ class Plugin {
         
         // Initialize search functionality
         new \ChurchEventsManager\Search\SearchHandler();
-        
+
         // Initialize recurring events
         new \ChurchEventsManager\Events\RecurringEvents();
         
@@ -166,7 +170,7 @@ class Plugin {
         new \ChurchEventsManager\I18n\Translator();
         
         // Initialize Elementor integration when Elementor is initialized
-        add_action('elementor/init', function() {
+        \add_action('elementor/init', function() {
             new \ChurchEventsManager\Elementor\ElementorIntegration();
         });
         
@@ -176,34 +180,34 @@ class Plugin {
 
     public function ensure_events_list_page() {
         // Create the front-end Events List page if missing and assign template
-        $page_id = (int) get_option('cem_events_page_id');
-        $page = $page_id ? get_post($page_id) : null;
+        $page_id = (int) \get_option('cem_events_page_id');
+        $page = $page_id ? \get_post($page_id) : null;
 
         if (!$page || $page->post_status === 'trash') {
-            $existing = get_page_by_path('events-list');
+            $existing = \get_page_by_path('events-list');
             if ($existing) {
                 $page_id = $existing->ID;
                 if ($existing->post_status !== 'publish') {
-                    wp_update_post(['ID' => $page_id, 'post_status' => 'publish']);
+                    \wp_update_post(['ID' => $page_id, 'post_status' => 'publish']);
                 }
             } else {
-                $page_id = wp_insert_post([
-                    'post_title'   => __('Events', 'church-events-manager'),
+                $page_id = \wp_insert_post([
+                    'post_title'   => \__('Events', 'church-events-manager'),
                     'post_name'    => 'events-list',
                     'post_type'    => 'page',
                     'post_status'  => 'publish',
                     'post_content' => ''
                 ]);
             }
-            if ($page_id && !is_wp_error($page_id)) {
-                update_post_meta($page_id, '_wp_page_template', 'events-list.php');
-                update_option('cem_events_page_id', $page_id);
+            if ($page_id && !\is_wp_error($page_id)) {
+                \update_post_meta($page_id, '_wp_page_template', 'events-list.php');
+                \update_option('cem_events_page_id', $page_id);
             }
         } else {
             // Ensure the template is correct
-            $tpl = get_post_meta($page_id, '_wp_page_template', true);
+            $tpl = \get_post_meta($page_id, '_wp_page_template', true);
             if ($tpl !== 'events-list.php') {
-                update_post_meta($page_id, '_wp_page_template', 'events-list.php');
+                \update_post_meta($page_id, '_wp_page_template', 'events-list.php');
             }
         }
     }
@@ -211,8 +215,8 @@ class Plugin {
     private function is_elementor_page($post_id) {
         // Robust detection for Elementor-built pages
         if (!class_exists('\\Elementor\\Plugin')) {
-            $edit_mode = get_post_meta($post_id, '_elementor_edit_mode', true);
-            $data = get_post_meta($post_id, '_elementor_data', true);
+            $edit_mode = \get_post_meta($post_id, '_elementor_edit_mode', true);
+            $data = \get_post_meta($post_id, '_elementor_data', true);
             return ($edit_mode === 'builder') || !empty($data);
         }
         $instance = \Elementor\Plugin::$instance;
@@ -220,13 +224,13 @@ class Plugin {
             try {
                 return (bool) $instance->db->is_built_with_elementor($post_id);
             } catch (\Throwable $e) {
-                $edit_mode = get_post_meta($post_id, '_elementor_edit_mode', true);
-                $data = get_post_meta($post_id, '_elementor_data', true);
+                $edit_mode = \get_post_meta($post_id, '_elementor_edit_mode', true);
+                $data = \get_post_meta($post_id, '_elementor_data', true);
                 return ($edit_mode === 'builder') || !empty($data);
             }
         }
-        $edit_mode = get_post_meta($post_id, '_elementor_edit_mode', true);
-        $data = get_post_meta($post_id, '_elementor_data', true);
+        $edit_mode = \get_post_meta($post_id, '_elementor_edit_mode', true);
+        $data = \get_post_meta($post_id, '_elementor_data', true);
         return ($edit_mode === 'builder') || !empty($data);
     }
 }
