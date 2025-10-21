@@ -199,7 +199,7 @@ class Calendar {
         $output .= wp_trim_words($event->post_content, 30);
         $output .= '</div>';
         
-        $output .= '<a href="' . esc_url(\church_events_get_occurrence_link($event_id, $event_meta->event_date)) . '" class="view-event-link">' . 
+        $output .= '<a href="' . esc_url(church_events_get_occurrence_link($event_id, $event_meta->event_date)) . '" class="view-event-link">' . 
                   __('View Details', 'church-events-manager') . '</a>';
         
         $output .= '</div>';

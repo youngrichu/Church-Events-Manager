@@ -3,7 +3,8 @@
  * Plugin Name: Church Events Manager
  * Description: A simple WordPress plugin to manage church events
  * Version: 1.1.0
- * Author: Your Name
+ * Author: Habtamu
+ * Author URI: https://github.com/youngrichu
  * License: GPL v2 or later
  * Text Domain: church-events-manager
  */
@@ -19,7 +20,17 @@ define('CEM_PLUGIN_FILE', __FILE__);
 define('CEM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('CEM_PLUGIN_URL', plugin_dir_url(__FILE__));
 // Add database schema version for migrations
-define('CEM_DB_VERSION', '1.0.4');
+define('CEM_DB_VERSION', '1.1.0');
+
+// Load translations on init hook with priority 1 (before post type registration at priority 10)
+// WordPress 6.7.0+ requires translations to be loaded at init or later
+add_action('init', function() {
+    load_plugin_textdomain(
+        'church-events-manager',
+        false,
+        dirname(plugin_basename(__FILE__)) . '/languages'
+    );
+}, 1);
 
 // Register activation hook
 register_activation_hook(__FILE__, function() {
@@ -66,64 +77,8 @@ register_deactivation_hook(__FILE__, function() {
     flush_rewrite_rules();
 });
 
-// Register the Events post type
-add_action('init', function() {
-    register_post_type('church_event', [
-        'labels' => [
-            'name' => __('Events', 'church-events-manager'),
-            'singular_name' => __('Event', 'church-events-manager'),
-            'add_new' => __('Add New', 'church-events-manager'),
-            'add_new_item' => __('Add New Event', 'church-events-manager'),
-            'edit_item' => __('Edit Event', 'church-events-manager'),
-            'new_item' => __('New Event', 'church-events-manager'),
-            'view_item' => __('View Event', 'church-events-manager'),
-            'search_items' => __('Search Events', 'church-events-manager'),
-            'not_found' => __('No events found', 'church-events-manager'),
-            'not_found_in_trash' => __('No events found in Trash', 'church-events-manager'),
-            'menu_name' => __('Events', 'church-events-manager')
-        ],
-        'public' => true,
-        'show_ui' => true,
-        'show_in_menu' => true,
-        'menu_position' => 20,
-        'menu_icon' => 'dashicons-calendar-alt',
-        'supports' => ['title', 'editor', 'thumbnail'],
-        'has_archive' => true,
-        'rewrite' => ['slug' => 'events', 'with_front' => false],
-        'show_in_rest' => true,
-        'publicly_queryable' => true,
-        'taxonomies' => ['event_category']
-    ]);
-
-    // Register the Event Category taxonomy
-    register_taxonomy('event_category', ['church_event'], [
-        'labels' => [
-            'name' => __('Event Categories', 'church-events-manager'),
-            'singular_name' => __('Event Category', 'church-events-manager'),
-            'search_items' => __('Search Categories', 'church-events-manager'),
-            'all_items' => __('All Categories', 'church-events-manager'),
-            'parent_item' => __('Parent Category', 'church-events-manager'),
-            'parent_item_colon' => __('Parent Category:', 'church-events-manager'),
-            'edit_item' => __('Edit Category', 'church-events-manager'),
-            'update_item' => __('Update Category', 'church-events-manager'),
-            'add_new_item' => __('Add New Category', 'church-events-manager'),
-            'new_item_name' => __('New Category Name', 'church-events-manager'),
-            'menu_name' => __('Categories', 'church-events-manager')
-        ],
-        'hierarchical' => true,
-        'show_ui' => true,
-        'show_admin_column' => true,
-        'query_var' => true,
-        'rewrite' => ['slug' => 'event-category'],
-        'show_in_rest' => true,
-        'capabilities' => [
-            'manage_terms' => 'manage_categories',
-            'edit_terms' => 'manage_categories',
-            'delete_terms' => 'manage_categories',
-            'assign_terms' => 'edit_posts'
-        ]
-    ]);
-});
+// Note: Post type and taxonomy registration is now handled by the Plugin class
+// to avoid duplicate registration
 
 
 
@@ -180,22 +135,8 @@ add_action('save_post_church_event', function($post_id, $post, $update) {
 }, 5, 3);
 
 
-// Initialize the API Controller
-add_action('init', function() {
-    new \ChurchEventsManager\API\EventsController();
-});
-
-// Initialize Notifications
-add_action('init', function() {
-    new \ChurchEventsManager\Notifications\NotificationManager();
-});
-
-// Initialize the Event Notification Manager
-add_action('init', function() {
-    if (class_exists('Church_App_Notifications_API')) {
-        new \ChurchEventsManager\Notifications\EventNotificationManager();
-    }
-});
+// Note: API Controllers, Notifications, etc. are now initialized within the Plugin class
+// to avoid duplicate instantiation
 
 // Add autoloader
 spl_autoload_register(function($class) {
@@ -215,13 +156,22 @@ spl_autoload_register(function($class) {
     }
 });
 
-// Ensure core plugin bootstrap is initialized
-add_action('plugins_loaded', function() {
-    // Initialize consolidated plugin bootstrap to ensure shortcodes and components are registered
+// Initialize the plugin on init hook (after translations are loaded at priority 1)
+add_action('init', function() {
+    // Initialize core Plugin class which handles all component initialization
     if (class_exists('ChurchEventsManager\\Core\\Plugin')) {
         new \ChurchEventsManager\Core\Plugin();
     }
+}, 5); // Priority 5 - after translations (priority 1) but before post type registration (priority 10)
+
+// Force migration check on plugin activation/update
+register_activation_hook(__FILE__, function() {
+    // Force migration check by clearing the version
+    delete_option('cem_db_version');
+    new \ChurchEventsManager\Core\Migrations();
 });
+
+// Ensure core plugin bootstrap is initialized (merged with main initialization above)
 
 // Register query var for occurrence and conditional rewrite rules
 add_filter('query_vars', function($vars){
@@ -238,7 +188,7 @@ add_action('init', function(){
         // /event/<slug>/<YYYY-MM-DD>/
         add_rewrite_rule(
             '^event/([^/]+)/([0-9]{4}-[0-9]{2}-[0-9]{2})/?$',
-            'index.php?church_event=$matches[1]&occurrence=$matches[2]',
+            'index.php?post_type=church_event&name=$matches[1]&occurrence=$matches[2]',
             'top'
         );
     }
@@ -295,9 +245,10 @@ add_action('init', function(){
     $opts = get_option('church_events_options');
     $need_pretty = (is_array($opts) && !empty($opts['use_pretty_occurrence_urls']));
     $installed = get_option('cem_pretty_rules_initialized');
-    if ($need_pretty && !$installed) {
+    // Bump the initialization marker so sites flush once after rule changes
+    if ($need_pretty && $installed !== '2') {
         flush_rewrite_rules();
-        update_option('cem_pretty_rules_initialized', '1');
+        update_option('cem_pretty_rules_initialized', '2');
     }
 });
 

@@ -3,7 +3,7 @@ namespace ChurchEventsManager\I18n;
 
 class Translator {
     public function __construct() {
-        add_action('init', [$this, 'load_textdomain']);
+        add_action('plugins_loaded', [$this, 'load_textdomain'], 10);
     }
 
     public function load_textdomain() {
@@ -111,4 +111,4 @@ class Translator {
             'maybe' => _x('Maybe', 'RSVP status', 'church-events-manager')
         ];
     }
-} 
+}

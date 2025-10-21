@@ -21,15 +21,21 @@ class Migrations {
             '1.0.1' => 'add_notification_fields',
             '1.0.2' => 'update_recurring_fields',
             '1.0.3' => 'add_all_day_flag',
-            '1.0.4' => 'remove_deprecated_fields'
+            '1.0.4' => 'remove_deprecated_fields',
+            '1.1.0' => 'update_schema_for_v1_1_0'
         ];
 
         foreach ($migrations as $version => $method) {
             if (version_compare($this->installed_version, $version, '<')) {
                 if (method_exists($this, $method)) {
-                    $this->$method();
+                    $result = $this->$method();
+                    if ($result === false) {
+                        error_log("CEM Migration failed for version {$version}");
+                        continue;
+                    }
                 }
                 update_option('cem_db_version', $version);
+                error_log("CEM Migration completed for version {$version}");
             }
         }
     }
@@ -48,6 +54,11 @@ class Migrations {
                 location varchar(255),
                 is_recurring tinyint(1) DEFAULT 0,
                 recurring_pattern varchar(50),
+                recurring_interval int DEFAULT 1,
+                recurring_end_date datetime,
+                recurring_count int DEFAULT NULL,
+                is_all_day tinyint(1) DEFAULT 0,
+                notification_sent tinyint(1) DEFAULT 0,
                 created_at datetime DEFAULT CURRENT_TIMESTAMP,
                 updated_at datetime DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY  (id),
@@ -113,13 +124,55 @@ class Migrations {
     private function remove_deprecated_fields() {
         // Skip dropping columns for cross-DB compatibility (e.g., SQLite).
         // These columns are deprecated and unused; leaving them does not affect functionality.
-        return;
+        return true;
+    }
+
+    private function update_schema_for_v1_1_0() {
+        global $wpdb;
+        
+        $table = $wpdb->prefix . 'cem_event_meta';
+        
+        // Ensure all required columns exist for v1.1.0
+        $required_columns = [
+            'is_recurring' => 'tinyint(1) DEFAULT 0',
+            'recurring_pattern' => 'varchar(50)',
+            'recurring_end_date' => 'datetime',
+            'recurring_count' => 'int DEFAULT NULL',
+            'recurring_interval' => 'int DEFAULT 1',
+            'is_all_day' => 'tinyint(1) DEFAULT 0',
+            'notification_sent' => 'tinyint(1) DEFAULT 0'
+        ];
+        
+        foreach ($required_columns as $column => $definition) {
+            if (!$this->column_exists($table, $column)) {
+                $sql = "ALTER TABLE $table ADD COLUMN $column $definition";
+                $result = $wpdb->query($sql);
+                if ($result === false) {
+                    error_log("CEM: Failed to add column {$column} to {$table}. Error: " . $wpdb->last_error);
+                    return false;
+                }
+                error_log("CEM: Added column {$column} to {$table}");
+            }
+        }
+        
+        return true;
     }
 
     private function column_exists($table, $column) {
         global $wpdb;
-        // Cross-DB approach: inspect column names from a simple select.
-        // Works with both MySQL and SQLite.
+        
+        // Use DESCRIBE for MySQL/MariaDB
+        $columns = $wpdb->get_results("DESCRIBE $table", ARRAY_A);
+        if ($columns) {
+            foreach ($columns as $col) {
+                if ($col['Field'] === $column) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // Fallback: Cross-DB approach for other databases
         $wpdb->get_results("SELECT * FROM $table LIMIT 1");
         $cols = method_exists($wpdb, 'get_col_info') ? $wpdb->get_col_info('name') : [];
         if (!is_array($cols)) {

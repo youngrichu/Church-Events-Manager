@@ -1,0 +1,64 @@
+/* Scoped overrides to style [church_events] shortcode on home page
+   Matches the Events List card aesthetic but does not affect the Events List page
+   (only loaded by shortcode rendering) */
+
+.church-events-list.events-list {
+  margin: 0;
+  padding: 0;
+}
+
+.church-events-list.events-list .events-card {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Date column */
+.church-events-list.events-list .event-date-col .event-dow {
+  color: rgba(255, 255, 255, 0.85);
+}
+.church-events-list.events-list .event-date-col .event-day {
+  color: #ffffff;
+}
+
+/* Title & links */
+.church-events-list.events-list .event-content-col .event-title a {
+  color: #ffffff;
+}
+.church-events-list.events-list .event-content-col .event-title a:hover,
+.church-events-list.events-list .event-content-col .event-title a:focus {
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+/* Meta & excerpt */
+.church-events-list.events-list .event-meta,
+.church-events-list.events-list .event-meta .event-date,
+.church-events-list.events-list .event-meta .event-location,
+.church-events-list.events-list .event-excerpt {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.church-events-list.events-list .event-series-tag,
+.church-events-list.events-list .event-details-link {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Thumbnail */
+.church-events-list.events-list .event-thumb-col .event-thumb {
+  border-radius: 8px;
+}
+
+/* View More CTA for the shortcode */
+.church-events-list.events-list + .shortcode-view-more {
+  margin-top: 24px;
+}
+.church-events-list.events-list + .shortcode-view-more .button {
+  background: #ffffff;
+  color: #1f1c6e; /* deep indigo to complement purple background */
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.church-events-list.events-list + .shortcode-view-more .button:hover {
+  opacity: 0.95;
+}

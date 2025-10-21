@@ -143,18 +143,17 @@ class ImportManager {
         }
 
         $headers = fgetcsv($handle);
-+        // Normalize CSV headers: trim, lowercase, and strip UTF-8 BOM to avoid "title" mismatch
-+        if ($headers && is_array($headers)) {
-+            $headers = array_map(function($h) {
-+                $h = (string) $h;
-+                // Remove BOM if present on first cell or any header
-+                $h = preg_replace('/^\xEF\xBB\xBF/', '', $h);
-+                return strtolower(trim($h));
-+            }, $headers);
-+        }
-         $required_fields = ['title', 'date'];
--        $missing_fields = array_diff($required_fields, $headers);
-+        $missing_fields = array_diff($required_fields, $headers);
+        // Normalize CSV headers: trim, lowercase, and strip UTF-8 BOM to avoid "title" mismatch
+        if ($headers && is_array($headers)) {
+            $headers = array_map(function($h) {
+                $h = (string) $h;
+                // Remove BOM if present on first cell or any header
+                $h = preg_replace('/^\xEF\xBB\xBF/', '', $h);
+                return strtolower(trim($h));
+            }, $headers);
+        }
+        $required_fields = ['title', 'date'];
+        $missing_fields = array_diff($required_fields, $headers);
 
         if (!empty($missing_fields)) {
             fclose($handle);

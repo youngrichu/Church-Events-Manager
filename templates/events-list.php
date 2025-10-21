@@ -81,30 +81,151 @@ if ($view === 'month' || $view === 'day') {
         $now = current_time('mysql');
         $end = date('Y-m-d H:i:s', strtotime('+1 year', strtotime($now)));
 
-        $events = $wpdb->get_results($wpdb->prepare(
-            "SELECT p.*, em.* FROM {$wpdb->posts} p
+        // Debug: Check if we have any events at all
+        $total_events = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'church_event' AND post_status = 'publish'");
+        $total_meta = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}cem_event_meta");
+        echo "<!-- DEBUG: Total church_event posts: $total_events, Total meta records: $total_meta -->";
+        
+        // Debug: Check if table exists and its structure
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}cem_event_meta'");
+        echo "<!-- DEBUG: Table exists: " . ($table_exists ? 'YES' : 'NO') . " -->";
+        
+        if ($table_exists) {
+            $columns = $wpdb->get_results("SHOW COLUMNS FROM {$wpdb->prefix}cem_event_meta");
+            $column_names = array_map(function($col) { return $col->Field; }, $columns);
+            echo "<!-- DEBUG: Table columns: " . implode(', ', $column_names) . " -->";
+        }
+        
+        // Debug: Show sample data from meta table
+        $sample_meta = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}cem_event_meta LIMIT 3");
+        foreach ($sample_meta as $i => $meta) {
+            echo "<!-- DEBUG: Sample meta $i: ID={$meta->id}, event_id={$meta->event_id}, date={$meta->event_date}, recurring={$meta->is_recurring} -->";
+        }
+        
+        $sql = "SELECT p.*, em.* FROM {$wpdb->posts} p
              JOIN {$wpdb->prefix}cem_event_meta em ON p.ID = em.event_id
              WHERE p.post_type = 'church_event' AND p.post_status = 'publish'
              AND (
-                (em.is_recurring = 0 AND em.event_date >= %s)
+                (em.is_recurring = 0 AND em.event_date BETWEEN %s AND %s)
                 OR (em.is_recurring = 1 AND em.event_date <= %s AND (em.recurring_end_date IS NULL OR em.recurring_end_date >= %s))
              )
-             ORDER BY em.event_date ASC",
-             $now,
-             $end,
-             $now
-        ));
+             ORDER BY em.event_date ASC";
+        
+        // Debug: Show the actual query
+        echo "<!-- DEBUG: SQL Query: " . $wpdb->prepare($sql, $now, $end, $end, $now) . " -->";
+        
+        // Execute the query with error checking
+        $events = $wpdb->get_results($wpdb->prepare($sql, $now, $end, $end, $now));
+        
+        // Debug: Check for SQL errors
+        if ($wpdb->last_error) {
+            echo "<!-- DEBUG: SQL Error: " . $wpdb->last_error . " -->";
+        }
+        
+        echo "<!-- DEBUG: Raw events count: " . count($events) . " -->";
+        
+        // If no events found, let's debug further
+        if (empty($events)) {
+            // Test the JOIN separately
+            $join_test = $wpdb->get_results("
+                SELECT p.ID, p.post_title, em.event_date 
+                FROM {$wpdb->posts} p 
+                LEFT JOIN {$wpdb->prefix}cem_event_meta em ON p.ID = em.event_id 
+                WHERE p.post_type = 'church_event' AND p.post_status = 'publish'
+                LIMIT 5
+            ");
+            echo "<!-- DEBUG: JOIN test results: " . count($join_test) . " -->";
+            foreach ($join_test as $i => $test) {
+                echo "<!-- DEBUG: JOIN test $i: ID={$test->ID}, title={$test->post_title}, date={$test->event_date} -->";
+            }
+            
+            // Check for future events specifically
+            $future_events = $wpdb->get_results($wpdb->prepare("
+                SELECT COUNT(*) as count 
+                FROM {$wpdb->prefix}cem_event_meta 
+                WHERE event_date >= %s
+            ", $now));
+            echo "<!-- DEBUG: Future events in meta table: " . (isset($future_events[0]) ? $future_events[0]->count : 0) . " -->";
+        }
 
-        // Expand occurrences
+        // Group recurring events (settings toggle) - Check this FIRST to avoid duplicates
+        $opts = get_option('church_events_options', []);
+        $groupedList = !empty($opts['group_recurring_in_list']);
+        
+        echo "<!-- DEBUG: Grouped list setting: " . ($groupedList ? 'YES' : 'NO') . " -->";
+        
         $occurrences = [];
-        foreach ($events as $event) {
-            if ((int)$event->is_recurring === 1) {
-                foreach (ChurchEventsManager\Events\RecurrenceExpander::expandInRange($event, $now, $end) as $occ) {
-                    $occurrences[] = $occ;
+        
+        if ($groupedList) {
+            // When grouping is enabled, show only one entry per recurring series
+            $processed_series = [];
+            foreach ($events as $event) {
+                echo "<!-- DEBUG: Processing event {$event->ID}: {$event->post_title} | Recurring: {$event->is_recurring} -->";
+                
+                if ((int)$event->is_recurring === 1) {
+                    // For recurring events, find the next occurrence and show only once per series
+                    if (!in_array($event->ID, $processed_series)) {
+                        $next = null;
+                        
+                        // DEBUG: Test RecurrenceExpander
+                        echo "<!-- DEBUG: Testing RecurrenceExpander for event {$event->ID} -->";
+                        try {
+                            $expanded = ChurchEventsManager\Events\RecurrenceExpander::expandInRange($event, $now, $end);
+                            echo "<!-- DEBUG: RecurrenceExpander returned " . count($expanded) . " occurrences -->";
+                            
+                            foreach ($expanded as $occ) {
+                                echo "<!-- DEBUG: Occurrence date: {$occ->event_date} -->";
+                                if (strtotime($occ->event_date) >= strtotime($now)) { 
+                                    $next = $occ; 
+                                    echo "<!-- DEBUG: Found next occurrence: {$occ->event_date} -->";
+                                    break; 
+                                }
+                            }
+                        } catch (Exception $e) {
+                            echo "<!-- DEBUG: RecurrenceExpander error: " . $e->getMessage() . " -->";
+                        }
+                        
+                        if ($next) { 
+                            $occurrences[] = $next; 
+                            $processed_series[] = $event->ID;
+                            echo "<!-- DEBUG: Added recurring event to occurrences -->";
+                        } else {
+                            echo "<!-- DEBUG: No future occurrences found for recurring event -->";
+                        }
+                    }
+                } else {
+                    // For non-recurring events, add directly if in future
+                    echo "<!-- DEBUG: Non-recurring event, checking date: {$event->event_date} vs $now -->";
+                    if (strtotime($event->event_date) >= strtotime($now)) {
+                        $occurrences[] = $event;
+                        echo "<!-- DEBUG: Added non-recurring event to occurrences -->";
+                    } else {
+                        echo "<!-- DEBUG: Non-recurring event is in the past, skipping -->";
+                    }
                 }
-            } else {
-                if (strtotime($event->event_date) >= strtotime($now)) {
-                    $occurrences[] = $event;
+            }
+        } else {
+            // When grouping is disabled, expand all recurring events to show individual occurrences
+            foreach ($events as $event) {
+                echo "<!-- DEBUG: Processing event {$event->ID}: {$event->post_title} | Recurring: {$event->is_recurring} -->";
+                
+                if ((int)$event->is_recurring === 1) {
+                    try {
+                        $expanded = ChurchEventsManager\Events\RecurrenceExpander::expandInRange($event, $now, $end);
+                        echo "<!-- DEBUG: RecurrenceExpander returned " . count($expanded) . " occurrences -->";
+                        
+                        foreach ($expanded as $occ) {
+                            $occurrences[] = $occ;
+                            echo "<!-- DEBUG: Added occurrence: {$occ->event_date} -->";
+                        }
+                    } catch (Exception $e) {
+                        echo "<!-- DEBUG: RecurrenceExpander error: " . $e->getMessage() . " -->";
+                    }
+                } else {
+                    if (strtotime($event->event_date) >= strtotime($now)) {
+                        $occurrences[] = $event;
+                        echo "<!-- DEBUG: Added non-recurring event -->";
+                    }
                 }
             }
         }
@@ -114,26 +235,15 @@ if ($view === 'month' || $view === 'day') {
             return strtotime($a->event_date) <=> strtotime($b->event_date);
         });
 
-        // Group recurring events (settings toggle)
-        $opts = get_option('church_events_options', []);
-        $groupedList = !empty($opts['group_recurring_in_list']);
-        if ($groupedList) {
-            $series_entries = [];
-            foreach ($events as $event) {
-                if ((int)$event->is_recurring === 1) {
-                    $next = null;
-                    foreach (ChurchEventsManager\Events\RecurrenceExpander::expandInRange($event, $now, $end) as $occ) {
-                        if (strtotime($occ->event_date) >= strtotime($now)) { $next = $occ; break; }
-                    }
-                    if ($next) { $series_entries[] = $next; }
-                } else {
-                    if (strtotime($event->event_date) >= strtotime($now)) { $series_entries[] = $event; }
-                }
-            }
-            usort($series_entries, function($a, $b) {
-                return strtotime($a->event_date) <=> strtotime($b->event_date);
-            });
-            $occurrences = $series_entries;
+        // Enhanced debug logging
+        echo "<!-- DEBUG: Final occurrences count: " . count($occurrences) . " -->";
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('CEM Events List: Final occurrences count: ' . count($occurrences) . ', Grouped: ' . ($groupedList ? 'yes' : 'no'));
+        }
+        
+        // Debug each occurrence
+        foreach ($occurrences as $i => $occ) {
+            echo "<!-- DEBUG: Occurrence $i: ID={$occ->ID}, Title={$occ->post_title}, Date={$occ->event_date} -->";
         }
       ?>
 

@@ -87,7 +87,7 @@ class EventsWidget extends \WP_Widget {
         echo '<ul class="church-events-widget-list">';
         foreach ($occurrences as $event) {
             echo '<li class="event">';
-            echo '<a href="' . esc_url(\church_events_get_occurrence_link($event->ID, $event->event_date)) . '">' . esc_html($event->post_title) . '</a>';
+            echo '<a href="' . esc_url(church_events_get_occurrence_link($event->ID, $event->event_date)) . '">' . esc_html($event->post_title) . '</a>';
             echo '<span class="event-date">' . esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($event->event_date))) . '</span>';
             echo '</li>';
         }

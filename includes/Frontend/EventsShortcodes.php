@@ -15,12 +15,9 @@ class EventsShortcodes {
             'limit' => 10,
             'category' => '',
             'view' => 'list',
-            // New options
             'group_recurring' => '', // empty => use setting; '1'/'true' to enable; '0'/'false' to disable
             'show_badge' => '1',
-            'show_more' => '1',
-            'more_url' => '',
-            'more_text' => __('View More', 'church-events-manager'),
+            'excerpt_chars' => 160,
         ], $atts, 'church_events');
 
         // Calendar view
@@ -43,9 +40,8 @@ class EventsShortcodes {
         $now = current_time('mysql');
         $end = date('Y-m-d H:i:s', strtotime('+1 year', strtotime($now))); // sensible horizon
         
-        // Fetch parents and non-recurring
-        $events = $wpdb->get_results($wpdb->prepare(
-            "SELECT p.*, em.* FROM {$wpdb->posts} p
+        // Fetch parents and non-recurring (fix prepare placeholders vs args)
+        $query = "SELECT p.*, em.* FROM {$wpdb->posts} p
              JOIN {$wpdb->prefix}cem_event_meta em ON p.ID = em.event_id
              LEFT JOIN {$wpdb->term_relationships} tr ON tr.object_id = p.ID
              LEFT JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
@@ -54,14 +50,14 @@ class EventsShortcodes {
              AND (
                 (em.is_recurring = 0 AND em.event_date >= %s)
                 OR (em.is_recurring = 1 AND em.event_date <= %s AND (em.recurring_end_date IS NULL OR em.recurring_end_date >= %s))
-             )
-             " . ($atts['category'] ? " AND t.slug = %s" : "") . "
-             ORDER BY em.event_date ASC",
-             $now,
-             $end,
-             $now,
-             $atts['category'] ? $atts['category'] : null
-        ));
+             )";
+        $params = [ $now, $end, $now ];
+        if (!empty($atts['category'])) {
+            $query .= " AND t.slug = %s";
+            $params[] = $atts['category'];
+        }
+        $query .= " ORDER BY em.event_date ASC";
+        $events = $wpdb->get_results($wpdb->prepare($query, $params));
 
         // Determine grouping behavior (attribute overrides setting)
         $opts = get_option('church_events_options', []);
@@ -109,38 +105,59 @@ class EventsShortcodes {
             $entries = array_slice($entries, 0, $limit);
         }
 
-        // Render
-        $output = '<div class="church-events-list">';
-        foreach ($entries as $event) {
-            $output .= '<div class="event-item">';
-            $output .= '<h4><a href="' . esc_url(\church_events_get_occurrence_link($event->ID, $event->event_date)) . '">' . esc_html($event->post_title) . '</a></h4>';
-            $output .= '<div class="meta">';
-            $output .= esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($event->event_date)));
-            if (!empty($event->location)) {
-                $output .= ' — ' . esc_html($event->location);
-            }
-            if ($grouped && (int)$event->is_recurring === 1 && in_array(strtolower((string)$atts['show_badge']), ['1','true','yes','on'], true)) {
-                $output .= ' <span class="event-series-tag">&middot; ' . esc_html(__('Recurring series', 'church-events-manager')) . '</span>';
-                $output .= ' <a class="event-details-link" href="' . esc_url(\church_events_get_occurrence_link($event->ID, $event->event_date)) . '">' . esc_html(__('View details', 'church-events-manager')) . '</a>';
-            }
-            $output .= '</div>';
-            $output .= '<div class="excerpt">' . wp_trim_words($event->post_content, 25) . '</div>';
-            $output .= '</div>';
-        }
-        $output .= '</div>';
+        // No stylesheet enqueued for list view to keep structure-only output
 
-        // View More CTA
-        $show_more = in_array(strtolower((string)$atts['show_more']), ['1','true','yes','on'], true);
-        if ($show_more) {
-            $more_url = trim((string)$atts['more_url']);
-            if (!$more_url) {
-                $events_page_id = (int) get_option('cem_events_page_id');
-                $more_url = $events_page_id ? get_permalink($events_page_id) : get_post_type_archive_link('church_event');
-            }
-            $output .= '<div class="shortcode-view-more">';
-            $output .= '<a class="button button-secondary" href="' . esc_url($more_url) . '">' . esc_html($atts['more_text']) . '</a>';
+        // Render using Events List markup so styling can match
+        $output = '<div class="church-events-list events-list" data-cem="struct-only-v1">';
+        foreach ($entries as $event) {
+            $ts = strtotime($event->event_date);
+            $dow = strtoupper(date_i18n('M', $ts));
+            $daynum = date_i18n('j', $ts);
+            $has_thumb = has_post_thumbnail($event->ID);
+
+            $output .= '<article class="event-item">';
+            // Date column
+            $output .= '<div class="event-date-col">';
+            $output .= '<div class="event-dow">' . esc_html($dow) . '</div>';
+            $output .= '<div class="event-day">' . esc_html($daynum) . '</div>';
             $output .= '</div>';
+
+            // Content column
+            $output .= '<div class="event-content-col">';
+            $output .= '<h2 class="event-title"><a href="' . esc_url(church_events_get_occurrence_link($event->ID, $event->event_date)) . '">' . esc_html(get_the_title($event->ID)) . '</a></h2>';
+            $output .= '<div class="event-meta">';
+            $end_ts = !empty($event->event_end_date) ? strtotime($event->event_end_date) : null;
+            $is_all_day = !empty($event->is_all_day);
+            $time_text = '';
+            if ($is_all_day) {
+                $time_text = __('All day', 'church-events-manager');
+            } else {
+                $time_text = date_i18n(get_option('time_format'), $ts);
+                if ($end_ts && $end_ts > $ts) {
+                    $time_text .= ' – ' . date_i18n(get_option('time_format'), $end_ts);
+                }
+            }
+            $output .= '<span class="event-time">' . esc_html($time_text) . '</span>';
+            if ($grouped && (int)$event->is_recurring === 1 && in_array(strtolower((string)$atts['show_badge']), ['1','true','yes','on'], true)) {
+                $output .= '<span class="event-series-tag">&middot; ' . esc_html(__('Recurring series', 'church-events-manager')) . '</span>';
+            }
+            $output .= '</div>'; // .event-meta
+
+            $excerpt_chars = intval($atts['excerpt_chars']);
+            $excerpt_chars = $excerpt_chars > 0 ? $excerpt_chars : 160;
+            $raw_content = get_post_field('post_content', $event->ID);
+            $excerpt = wp_html_excerpt(wp_strip_all_tags($raw_content), $excerpt_chars, '&hellip;');
+
+            $output .= '<div class="event-excerpt">' . esc_html($excerpt) . '</div>';
+            $output .= '</div>'; // .event-content-col
+
+            // Thumbnail column removed (no image in shortcode output)
+
+            $output .= '</article>';
         }
+        $output .= '</div>'; // .church-events-list
+
+        // View More CTA removed for structure-only output controlled by Elementor grid
 
         return $output;
     }

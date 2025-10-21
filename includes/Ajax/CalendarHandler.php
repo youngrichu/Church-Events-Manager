@@ -114,7 +114,7 @@ class CalendarHandler {
                                 <div class="event-description">
                                     <?php echo wp_trim_words($event->post_content, 20); ?>
                                 </div>
-                                <a href="<?php echo esc_url(\church_events_get_occurrence_link($event->ID, $event->event_date)); ?>" class="event-link">
+                                <a href="<?php echo esc_url(church_events_get_occurrence_link($event->ID, $event->event_date)); ?>" class="event-link">
                                     <?php _e('View Details', 'church-events-manager'); ?>
                                 </a>
                             </div>

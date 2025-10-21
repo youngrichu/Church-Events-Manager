@@ -8,6 +8,123 @@
     overflow: hidden;
 }
 
+/* Single Event Container Constraints */
+.event-single {
+    max-width: 1200px;
+    margin: 0 auto 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Two-column layout for single events - Enhanced for Elementor compatibility */
+.event-single .event-layout-container,
+article.event-single .event-layout-container,
+.single-church_event .event-layout-container {
+    display: grid !important;
+    grid-template-columns: 1fr 350px !important;
+    gap: 2rem !important;
+    margin-top: 1rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Fallback flexbox layout for better compatibility */
+.event-single .event-layout-container {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -webkit-box-orient: horizontal !important;
+    -webkit-box-direction: normal !important;
+    -ms-flex-direction: row !important;
+    flex-direction: row !important;
+    -webkit-box-align: start !important;
+    -ms-flex-align: start !important;
+    align-items: flex-start !important;
+}
+
+/* Support for CSS Grid when available */
+@supports (display: grid) {
+    .event-single .event-layout-container,
+    article.event-single .event-layout-container,
+    .single-church_event .event-layout-container {
+        display: grid !important;
+        grid-template-columns: 1fr 350px !important;
+        -webkit-box-orient: unset !important;
+        -webkit-box-direction: unset !important;
+        -ms-flex-direction: unset !important;
+        flex-direction: unset !important;
+    }
+}
+
+.event-single .event-main-content,
+article.event-single .event-main-content,
+.single-church_event .event-main-content {
+    min-width: 0 !important; /* Prevents grid overflow */
+    -webkit-box-flex: 1 !important;
+    -ms-flex: 1 1 auto !important;
+    flex: 1 1 auto !important;
+    margin-right: 2rem !important;
+}
+
+@supports (display: grid) {
+    .event-single .event-main-content,
+    article.event-single .event-main-content,
+    .single-church_event .event-main-content {
+        -webkit-box-flex: unset !important;
+        -ms-flex: unset !important;
+        flex: unset !important;
+        margin-right: 0 !important;
+    }
+}
+
+.event-single .event-sidebar,
+article.event-single .event-sidebar,
+.single-church_event .event-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    width: 350px !important;
+    -webkit-box-flex: 0 !important;
+    -ms-flex: 0 0 350px !important;
+    flex: 0 0 350px !important;
+}
+
+/* Responsive container adjustments */
+@media (max-width: 1240px) {
+    .event-single {
+        margin: 0 1rem 2rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .event-single {
+        margin: 0 0.5rem 2rem 0.5rem;
+        padding: 0;
+    }
+    
+    .event-single .event-layout-container,
+    article.event-single .event-layout-container,
+    .single-church_event .event-layout-container {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+        flex-direction: column !important;
+    }
+    
+    .event-single .event-main-content,
+    article.event-single .event-main-content,
+    .single-church_event .event-main-content {
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+    
+    .event-single .event-sidebar,
+    article.event-single .event-sidebar,
+    .single-church_event .event-sidebar {
+        order: -1 !important; /* Move sidebar above content on mobile */
+        width: 100% !important;
+        flex: none !important;
+    }
+}
+
 /* Event Header */
 .event-header {
     position: relative;
@@ -31,11 +148,46 @@
     color: #333;
 }
 
+/* Enhanced title padding for single events */
+.event-single .event-title {
+    margin: 1.5rem 2rem;
+}
+
+@media (max-width: 768px) {
+    .event-single .event-title {
+        margin: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-single .event-title {
+        margin: 0.75rem;
+        font-size: 1.75em;
+    }
+}
+
 /* Event Meta */
 .event-meta {
     padding: 1rem;
     background: #f8f9fa;
     border-bottom: 1px solid #dee2e6;
+}
+
+/* Enhanced meta padding for single events */
+.event-single .event-meta {
+    padding: 1.5rem 2rem;
+}
+
+@media (max-width: 768px) {
+    .event-single .event-meta {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-single .event-meta {
+        padding: 0.75rem;
+    }
 }
 
 .event-meta > div {
@@ -67,6 +219,23 @@
     line-height: 1.6;
 }
 
+/* Enhanced padding for single event content */
+.event-single .event-content {
+    padding: 2rem;
+}
+
+@media (max-width: 768px) {
+    .event-single .event-content {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-single .event-content {
+        padding: 0.75rem;
+    }
+}
+
 /* RSVP Section */
 .event-rsvp {
     padding: 1.5rem;
@@ -84,6 +253,168 @@
     padding: 1rem;
     background: #f8f9fa;
     border-top: 1px solid #dee2e6;
+}
+
+/* Enhanced footer padding for single events */
+.event-single .event-footer {
+    padding: 1.5rem 2rem;
+}
+
+@media (max-width: 768px) {
+    .event-single .event-footer {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-single .event-footer {
+        padding: 0.75rem;
+    }
+}
+
+/* Event Details Box Styling - Enhanced for Elementor compatibility */
+.event-single .event-details-box,
+article.event-single .event-details-box,
+.single-church_event .event-details-box {
+    background: #fff !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.event-details-box .details-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 0.5rem;
+}
+
+.event-details-box .event-datetime,
+.event-details-box .event-location,
+.event-details-box .event-recurring {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.event-details-box .event-datetime:last-child,
+.event-details-box .event-location:last-child,
+.event-details-box .event-recurring:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.event-details-box i {
+    color: #6c757d;
+    font-size: 1.1em;
+    margin-top: 0.2rem;
+    width: 16px;
+    text-align: center;
+}
+
+.event-details-box .detail-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.event-details-box .detail-content strong {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95em;
+}
+
+.event-details-box .detail-content span {
+    color: #666;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* Upcoming Dates Box Styling - Enhanced for Elementor compatibility */
+.event-single .upcoming-dates-box,
+article.event-single .upcoming-dates-box,
+.single-church_event .upcoming-dates-box {
+    background: #fff !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.upcoming-dates-box .upcoming-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 0.5rem;
+}
+
+.upcoming-dates-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.upcoming-date-item {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.upcoming-date-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.upcoming-date-item a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s ease;
+}
+
+.upcoming-date-item a:hover {
+    color: #007bff;
+}
+
+.upcoming-date-item .date-text {
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.upcoming-date-item .time-text {
+    font-size: 0.85em;
+    color: #666;
+}
+
+/* Mobile adjustments for sidebar boxes */
+@media (max-width: 768px) {
+    .event-details-box,
+    .upcoming-dates-box {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .event-details-box .details-title,
+    .upcoming-dates-box .upcoming-title {
+        font-size: 1.1em;
+    }
 }
 
 .event-categories {
@@ -299,6 +630,444 @@
     color: #6c757d;
 }
 
+/* Enhanced Sidebar Sections Styling - Maximum Elementor compatibility */
+
+/* Search Box Styling - Ultra high specificity - Professional Design */
+body.single-church_event .event-single .sidebar-search-box,
+body.single-church_event article.event-single .sidebar-search-box,
+body.single-church_event .single-church_event .sidebar-search-box,
+.elementor-page .event-single .sidebar-search-box,
+.elementor-page article.event-single .sidebar-search-box,
+.elementor-page .single-church_event .sidebar-search-box {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* Search Title Styling - Professional */
+body.single-church_event .event-single .sidebar-search-box .sidebar-title,
+body.single-church_event article.event-single .sidebar-search-box .sidebar-title,
+body.single-church_event .single-church_event .sidebar-search-box .sidebar-title,
+.elementor-page .event-single .sidebar-search-box .sidebar-title,
+.elementor-page article.event-single .sidebar-search-box .sidebar-title,
+.elementor-page .single-church_event .sidebar-search-box .sidebar-title {
+    margin: 0 0 1rem 0 !important;
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    display: block !important;
+    font-family: inherit !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* Search Form Elements - Professional Design */
+body.single-church_event .sidebar-search-form,
+.elementor-page .sidebar-search-form {
+    margin: 0 !important;
+    display: block !important;
+}
+
+body.single-church_event .search-input-wrapper,
+.elementor-page .search-input-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    background: #f9fafb !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.15s ease-in-out !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 44px !important;
+}
+
+body.single-church_event .search-input-wrapper:focus-within,
+.elementor-page .search-input-wrapper:focus-within {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    background: #ffffff !important;
+}
+
+body.single-church_event .search-field,
+.elementor-page .search-field {
+    flex: 1 !important;
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    font-size: 0.875rem !important;
+    color: #374151 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    font-weight: 400 !important;
+}
+
+body.single-church_event .search-field::placeholder,
+.elementor-page .search-field::placeholder {
+    color: #9ca3af !important;
+    font-weight: 400 !important;
+}
+
+body.single-church_event .search-submit,
+.elementor-page .search-submit {
+    background: #3b82f6 !important;
+    border: none !important;
+    border-radius: 6px !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease-in-out !important;
+    margin-left: 0.5rem !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+body.single-church_event .search-submit:hover,
+.elementor-page .search-submit:hover {
+    background: #2563eb !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
+}
+
+body.single-church_event .search-submit:active,
+.elementor-page .search-submit:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3) !important;
+}
+
+body.single-church_event .search-icon,
+.elementor-page .search-icon {
+    color: white !important;
+    width: 16px !important;
+    height: 16px !important;
+    stroke: white !important;
+    fill: none !important;
+    stroke-width: 2 !important;
+}
+
+/* Recent Posts Styling - Ultra high specificity */
+body.single-church_event .event-single .sidebar-recent-posts,
+body.single-church_event article.event-single .sidebar-recent-posts,
+body.single-church_event .single-church_event .sidebar-recent-posts,
+.elementor-page .event-single .sidebar-recent-posts,
+.elementor-page article.event-single .sidebar-recent-posts,
+.elementor-page .single-church_event .sidebar-recent-posts {
+    background: #fff !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+body.single-church_event .recent-posts-list,
+.elementor-page .recent-posts-list {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+}
+
+body.single-church_event .recent-post-item,
+.elementor-page .recent-post-item {
+    padding: 0.75rem 0 !important;
+    border-bottom: 1px solid #f1f3f4 !important;
+    display: block !important;
+    margin: 0 !important;
+}
+
+body.single-church_event .recent-post-item:last-child,
+.elementor-page .recent-post-item:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+body.single-church_event .recent-post-item a,
+.elementor-page .recent-post-item a {
+    color: #333 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    display: block !important;
+    margin-bottom: 0.25rem !important;
+}
+
+body.single-church_event .recent-post-item a:hover,
+.elementor-page .recent-post-item a:hover {
+    color: #4f6ef7 !important;
+}
+
+body.single-church_event .post-date,
+.elementor-page .post-date {
+    color: #666 !important;
+    font-size: 0.85em !important;
+    display: block !important;
+}
+
+/* Recent Comments Styling - Ultra high specificity */
+body.single-church_event .event-single .sidebar-recent-comments,
+body.single-church_event article.event-single .sidebar-recent-comments,
+body.single-church_event .single-church_event .sidebar-recent-comments,
+.elementor-page .event-single .sidebar-recent-comments,
+.elementor-page article.event-single .sidebar-recent-comments,
+.elementor-page .single-church_event .sidebar-recent-comments {
+    background: #fff !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+body.single-church_event .recent-comments-list,
+.elementor-page .recent-comments-list {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+}
+
+body.single-church_event .recent-comment-item,
+.elementor-page .recent-comment-item {
+    padding: 0.75rem 0 !important;
+    border-bottom: 1px solid #f1f3f4 !important;
+    display: block !important;
+    margin: 0 !important;
+}
+
+body.single-church_event .recent-comment-item:last-child,
+.elementor-page .recent-comment-item:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+body.single-church_event .comment-author,
+.elementor-page .comment-author {
+    font-weight: 600 !important;
+    color: #333 !important;
+    font-size: 0.9em !important;
+    margin-bottom: 0.25rem !important;
+    display: block !important;
+}
+
+body.single-church_event .comment-excerpt a,
+.elementor-page .comment-excerpt a {
+    color: #666 !important;
+    text-decoration: none !important;
+    line-height: 1.4 !important;
+    display: block !important;
+    margin-bottom: 0.25rem !important;
+}
+
+body.single-church_event .comment-excerpt a:hover,
+.elementor-page .comment-excerpt a:hover {
+    color: #4f6ef7 !important;
+}
+
+body.single-church_event .comment-date,
+.elementor-page .comment-date {
+    color: #999 !important;
+    font-size: 0.8em !important;
+    display: block !important;
+}
+
+/* Archives Styling - Ultra high specificity */
+body.single-church_event .event-single .sidebar-archives,
+body.single-church_event article.event-single .sidebar-archives,
+body.single-church_event .single-church_event .sidebar-archives,
+.elementor-page .event-single .sidebar-archives,
+.elementor-page article.event-single .sidebar-archives,
+.elementor-page .single-church_event .sidebar-archives {
+    background: #fff !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+body.single-church_event .archives-list,
+.elementor-page .archives-list {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+}
+
+body.single-church_event .archive-item,
+.elementor-page .archive-item {
+    padding: 0.5rem 0 !important;
+    border-bottom: 1px solid #f1f3f4 !important;
+    display: block !important;
+    margin: 0 !important;
+}
+
+body.single-church_event .archive-item:last-child,
+.elementor-page .archive-item:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+body.single-church_event .archive-item a,
+.elementor-page .archive-item a {
+    color: #333 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    display: block !important;
+}
+
+body.single-church_event .archive-item a:hover,
+.elementor-page .archive-item a:hover {
+    color: #4f6ef7 !important;
+}
+
+/* Categories Styling - Ultra high specificity */
+body.single-church_event .event-single .sidebar-categories,
+body.single-church_event article.event-single .sidebar-categories,
+body.single-church_event .single-church_event .sidebar-categories,
+.elementor-page .event-single .sidebar-categories,
+.elementor-page article.event-single .sidebar-categories,
+.elementor-page .single-church_event .sidebar-categories {
+    background: #fff !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 8px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    position: relative !important;
+}
+
+body.single-church_event .categories-list,
+.elementor-page .categories-list {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+}
+
+body.single-church_event .category-item,
+.elementor-page .category-item {
+    padding: 0.5rem 0 !important;
+    border-bottom: 1px solid #f1f3f4 !important;
+    display: block !important;
+    margin: 0 !important;
+}
+
+body.single-church_event .category-item:last-child,
+.elementor-page .category-item:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+body.single-church_event .category-item a,
+.elementor-page .category-item a {
+    color: #333 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+body.single-church_event .category-item a:hover,
+.elementor-page .category-item a:hover {
+    color: #4f6ef7 !important;
+}
+
+body.single-church_event .post-count,
+.elementor-page .post-count {
+    color: #666 !important;
+    font-size: 0.85em !important;
+    font-weight: normal !important;
+}
+
+/* No content messages - Ultra high specificity */
+body.single-church_event .no-posts,
+body.single-church_event .no-comments,
+body.single-church_event .no-categories,
+.elementor-page .no-posts,
+.elementor-page .no-comments,
+.elementor-page .no-categories {
+    color: #666 !important;
+    font-style: italic !important;
+    margin: 0 !important;
+    text-align: center !important;
+    padding: 1rem 0 !important;
+    display: block !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .events-list .event-item {
+        flex-direction: column;
+    }
+
+    .events-list .event-thumbnail {
+        width: 100%;
+        height: 200px;
+    }
+
+    .events-filter-form {
+        flex-direction: column;
+    }
+
+    .events-filter-form select,
+    .events-filter-form button {
+        width: 100%;
+    }
+
+    .event-thumbnail {
+        height: 200px;
+    }
+
+    .event-title {
+        font-size: 1.5em;
+    }
+
+    .event-meta {
+        flex-direction: column;
+    }
+}
+
+/* No Events Message */
+.no-events {
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #6c757d;
+}
+
 /* Loading States */
 .events-loading {
     opacity: 0.5;
@@ -437,9 +1206,57 @@
   #primary .site-main { padding: 0 40px; }
 }
 
-/* Single Event actions and navigation */
+/* Single Event actions and navigation - Professional Design */
 .event-actions {
-  margin: 0 1rem 0.5rem;
+  margin: 0 0 1.5rem 0;
+  padding: 0 1rem;
+}
+
+/* Back to Events Button - Professional Styling */
+body.single-church_event .back-to-events,
+.elementor-page .back-to-events,
+.event-actions .back-to-events {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  background: #f8fafc !important;
+  color: #3b82f6 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1.25rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.single-church_event .back-to-events:hover,
+.elementor-page .back-to-events:hover,
+.event-actions .back-to-events:hover {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  border-color: #3b82f6 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2) !important;
+  text-decoration: none !important;
+}
+
+body.single-church_event .back-to-events:active,
+.elementor-page .back-to-events:active,
+.event-actions .back-to-events:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Add arrow icon before text */
+body.single-church_event .back-to-events::before,
+.elementor-page .back-to-events::before,
+.event-actions .back-to-events::before {
+  content: "←" !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
 }
 .event-nav {
   display: flex;

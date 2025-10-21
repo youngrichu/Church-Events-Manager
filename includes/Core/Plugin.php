@@ -165,6 +165,11 @@ class Plugin {
         // Initialize internationalization
         new \ChurchEventsManager\I18n\Translator();
         
+        // Initialize Elementor integration when Elementor is initialized
+        add_action('elementor/init', function() {
+            new \ChurchEventsManager\Elementor\ElementorIntegration();
+        });
+        
         // Run database migrations if needed
         new \ChurchEventsManager\Core\Migrations();
     }
@@ -201,5 +206,27 @@ class Plugin {
                 update_post_meta($page_id, '_wp_page_template', 'events-list.php');
             }
         }
+    }
+
+    private function is_elementor_page($post_id) {
+        // Robust detection for Elementor-built pages
+        if (!class_exists('\\Elementor\\Plugin')) {
+            $edit_mode = get_post_meta($post_id, '_elementor_edit_mode', true);
+            $data = get_post_meta($post_id, '_elementor_data', true);
+            return ($edit_mode === 'builder') || !empty($data);
+        }
+        $instance = \Elementor\Plugin::$instance;
+        if (isset($instance->db) && method_exists($instance->db, 'is_built_with_elementor')) {
+            try {
+                return (bool) $instance->db->is_built_with_elementor($post_id);
+            } catch (\Throwable $e) {
+                $edit_mode = get_post_meta($post_id, '_elementor_edit_mode', true);
+                $data = get_post_meta($post_id, '_elementor_data', true);
+                return ($edit_mode === 'builder') || !empty($data);
+            }
+        }
+        $edit_mode = get_post_meta($post_id, '_elementor_edit_mode', true);
+        $data = get_post_meta($post_id, '_elementor_data', true);
+        return ($edit_mode === 'builder') || !empty($data);
     }
 }
