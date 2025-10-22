@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="Church Events Manager">
+  <description>WordPress Coding Standards for Church Events Manager.</description>
+
+  <!-- Use WordPress standards -->
+  <rule ref="WordPress-Core"/>
+  <rule ref="WordPress-Docs"/>
+  <rule ref="WordPress-Extra"/>
+
+  <!-- Target PHP source directories -->
+  <file>church-events-manager.php</file>
+  <directory>includes</directory>
+  <directory>templates</directory>
+
+  <!-- Ignore common non-PHP directories -->
+  <exclude-pattern>vendor/*</exclude-pattern>
+  <exclude-pattern>node_modules/*</exclude-pattern>
+  <exclude-pattern>assets/*</exclude-pattern>
+  <exclude-pattern>tests/*</exclude-pattern>
+
+  <!-- Summary report by default -->
+  <arg value="--report=summary"/>
+</ruleset>
