@@ -31,20 +31,26 @@
     width: 100%;
     border-collapse: collapse;
     background: white;
+    table-layout: fixed;
 }
 
 .calendar-table th {
     background: #f8f9fa;
-    padding: 10px;
+    padding: 8px 4px;
     text-align: center;
     border: 1px solid #dee2e6;
+    width: 14.28%; /* Equal width for 7 columns */
+    font-size: 0.9em;
 }
 
 .calendar-table td {
     border: 1px solid #dee2e6;
-    padding: 10px;
-    height: 100px;
+    padding: 4px;
+    height: 120px;
     vertical-align: top;
+    width: 14.28%; /* Equal width for 7 columns */
+    position: relative;
+    overflow: hidden;
 }
 
 .calendar-day {
@@ -52,8 +58,10 @@
 }
 
 .day-number {
-    font-size: 1.1em;
-    margin-bottom: 5px;
+    font-size: 0.9em;
+    margin-bottom: 3px;
+    font-weight: bold;
+    color: #333;
 }
 
 .other-month {
@@ -66,18 +74,21 @@
 }
 
 .day-events {
-    font-size: 0.9em;
+    font-size: 0.7em;
+    line-height: 1.2;
 }
 
 .calendar-event {
     margin: 2px 0;
-    padding: 2px 4px;
+    padding: 3px 4px;
     background: #e9ecef;
     border-radius: 3px;
     cursor: pointer;
-    white-space: nowrap;
+    font-size: 0.75em;
+    line-height: 1.2;
+    display: block;
+    max-width: 100%;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .calendar-event:hover {
@@ -87,14 +98,30 @@
 .event-time {
     color: #495057;
     font-weight: bold;
+    font-size: 1.5em;
+    display: block;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-title {
+    color: #333;
+    font-size: 1.5em;
+    line-height: 1.2;
+    white-space: normal;
+    display: block;
+    margin: 0;
 }
 
 .more-events {
     color: #6c757d;
-    font-size: 0.8em;
+    font-size: 0.6em;
     text-align: center;
-    margin-top: 2px;
+    margin-top: 1px;
     cursor: pointer;
+    padding: 1px;
 }
 
 .calendar-popup {
@@ -143,12 +170,41 @@
 
 @media (max-width: 768px) {
     .calendar-table td {
-        height: 80px;
-        padding: 5px;
+        height: 120px;
+        padding: 3px;
+    }
+    
+    .calendar-table th {
+        padding: 6px 2px;
+        font-size: 0.8em;
     }
     
     .calendar-event {
+        font-size: 0.7em;
+        padding: 2px 3px;
+        margin: 1px 0;
+    }
+    
+    .day-number {
         font-size: 0.8em;
+        margin-bottom: 2px;
+    }
+    
+    .event-time {
+        font-size: 1.4em;
+        margin-bottom: 2px;
+    }
+    
+    .event-title {
+        font-size: 1.0em;
+        line-height: 1.2;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .more-events {
+        font-size: 0.6em;
     }
 }
 
